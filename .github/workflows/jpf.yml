@@ -1,0 +1,83 @@
+name: JPF Runner
+
+on:
+  push:
+
+jobs:
+  run-jpf:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        ref: 59cabc10a214ae635e6e38dfd36f6c5df2323152
+        submodules: 'recursive'
+  
+    - name: Set up JDK 17 for project
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build project with JDK 17
+      run: mvnw clean package -Dmaven.test.skip
+
+    - name: Unzip source directory 
+      run: |
+        #!/bin/bash
+        dist_directory=$(pwd)/dist
+        if [ -d "$dist_directory" ]; then
+          find "$dist_directory" -type f -name "*.tar.gz" -print0 | while IFS= read -r -d '' file; do
+            echo "Extracting $file"
+            tar -xzf "$file" -C "$(dirname "$file")"
+          done
+        else
+          echo "$dist_directory does not exist."
+          exit 1
+        fi
+      
+    - name: Set up JDK 11 for JPF
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Clone and build jpf-core
+      run: |
+        git clone https://github.com/javapathfinder/jpf-core.git /tmp/jpf-core
+        cd /tmp/jpf-core
+        ./gradlew buildJars
+
+    - name: Run JPF on JAR files
+      run: |
+        #!/bin/bash
+
+        # Set the current working directory
+        directory=$(pwd)
+
+        # Define the path to the RunJPF.jar file
+        runjpf_jar="$HOME/jpf-core/build/RunJPF.jar"
+
+        # Find all .jar files in the specified directory and its subdirectories, excluding those with "SNAPSHOT" in the name
+        jar_files=$(find "$directory" -type f -name "*.jar")
+
+        # Loop through each .jar file found
+        for jar_file in $jar_files; 
+        do
+            # Extract the directory containing the .jar file
+            jar_dir=$(dirname "$jar_file")
+            
+            # Extract the main class from the jar's manifest
+            main_class=$(unzip -p "$jar_file" META-INF/MANIFEST.MF | grep -i 'Main-Class' | awk -F': ' '{print $2}' | tr -d '\r')
+
+            if [ -z "$main_class" ]; then
+                echo "Main class not found in $jar_file, skipping..."
+                continue
+            fi
+            
+            # Construct the command
+            command="java -jar $runjpf_jar +classpath=$jar_file $main_class"
+            
+            # Execute the command
+            echo "Executi
