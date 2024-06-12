@@ -80,4 +80,6 @@ jobs:
             command="java -jar $runjpf_jar +classpath=$jar_file $main_class"
             
             # Execute the command
-            echo "Executi
+            echo "Executing $command"
+            $command
+        done
