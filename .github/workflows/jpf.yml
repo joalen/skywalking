@@ -57,7 +57,7 @@ jobs:
         directory=$(pwd)
 
         # Define the path to the RunJPF.jar file
-        runjpf_jar="$HOME/jpf-core/build/RunJPF.jar"
+        runjpf_jar="/tmp/jpf-core/build/RunJPF.jar"
 
         # Find all .jar files in the specified directory and its subdirectories, excluding those with "SNAPSHOT" in the name
         jar_files=$(find "$directory" -type f -name "*.jar")
