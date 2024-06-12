@@ -21,7 +21,7 @@ jobs:
         java-version: '17'
 
     - name: Build project with JDK 17
-      run: mvnw clean package -Dmaven.test.skip
+      run: ./mvnw clean package -Dmaven.test.skip
 
     - name: Unzip source directory 
       run: |
