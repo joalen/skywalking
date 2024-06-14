@@ -12,8 +12,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: 59cabc10a214ae635e6e38dfd36f6c5df2323152
-
-    - name: Install JDK 17
+        submodules: 'recursive'
+  
+    - name: Set up JDK 17 for project
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
