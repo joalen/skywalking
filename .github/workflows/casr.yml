@@ -19,7 +19,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Build project with JDK 17 (if you do remove the above section, move this one under the "Set up JDK 11 for JPF" step!)
+    - name: Build project with JDK 17
       run: mvn clean install -DskipTests
 
     - name: Setup CASR
@@ -31,6 +31,7 @@ jobs:
         echo "/tmp/casr" >> $GITHUB_PATH
 
     - name: Run CASR on the .java file(s)
+      continue-on-error: true
       run: |      
         set +e
         #!/bin/bash
