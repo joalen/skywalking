@@ -23,7 +23,7 @@ jobs:
     - name: Build project with JDK 17
       run: ./mvnw clean package -Dmaven.test.skip
 
-    - name: Setup CASR (prerequisites --> macports and cargo)
+    - name: Setup macports
       run: |
           curl -O https://distfiles.macports.org/MacPorts/MacPorts-2.7.2.tar.bz2
           tar xf MacPorts-2.7.2.tar.bz2
@@ -32,8 +32,11 @@ jobs:
           make
           sudo make install
           sudo port -v selfupdate
-          sudo port install cargo
-          cargo install casr
+    
+    - name: Setup CASR Installer 
+      run: |
+        sudo port install cargo
+        cargo install casr
 
     - name: Run CASR on the .java file(s)
       continue-on-error: true
