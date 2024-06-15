@@ -23,20 +23,13 @@ jobs:
     - name: Build project with JDK 17
       run: ./mvnw clean package -Dmaven.test.skip
 
-    - name: Setup macports
+    - name: Install Rust
       run: |
-          curl -O https://distfiles.macports.org/MacPorts/MacPorts-2.7.2.tar.bz2
-          tar xf MacPorts-2.7.2.tar.bz2
-          cd MacPorts-2.7.2
-          ./configure
-          make
-          sudo make install
-          sudo port -v selfupdate
-    
-    - name: Setup CASR Installer 
-      run: |
-        sudo port install cargo
-        cargo install casr
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        source $HOME/.cargo/env
+
+    - name: Install CASR using Cargo
+      run: cargo install casr
 
     - name: Run CASR on the .java file(s)
       continue-on-error: true
