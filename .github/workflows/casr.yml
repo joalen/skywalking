@@ -23,6 +23,9 @@ jobs:
     - name: Build project with JDK 17
       run: ./mvnw clean package -Dmaven.test.skip
 
+    - name: Install timeout command (to make hanging threads stop)
+      run: brew install coreutils
+      
     - name: Install Rust
       run: |
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -43,6 +46,6 @@ jobs:
 
         for jar_file in $jar_files; 
         do
-            command="casr-java --stdout -- java -jar $jar_file"
+            command="gtimeout 3m casr-java --stdout -- java -jar $jar_file"
             $command
         done
