@@ -43,6 +43,6 @@ jobs:
 
         for jar_file in $jar_files; 
         do
-            command="casr-java --stdout -- java -Xmx 256m -jar $jar_file"
+            command="casr-java --stdout -- java -Xmx 1g -jar $jar_file"
             $command
         done
