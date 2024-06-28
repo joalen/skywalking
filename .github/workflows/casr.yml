@@ -1,4 +1,4 @@
-name: CASR Runner
+name: Run CASR
 
 on:
   push:
