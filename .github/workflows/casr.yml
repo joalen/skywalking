@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  run-asan:
+  run-casr:
     name: '${{ matrix.os }}'
     runs-on: ${{ matrix.os }}
     strategy:
