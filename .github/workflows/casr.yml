@@ -52,7 +52,7 @@ jobs:
 
         for jar_file in $jar_files; 
         do
-            command="gtimeout 3m casr-java --stdout -- java -jar $jar_file"
+            command="gtimeout 3m casr-java --stdout -- java -jar $jar_file 2>&1 >/dev/null"
             $command
         done
 
@@ -69,6 +69,6 @@ jobs:
 
         for jar_file in $jar_files; 
         do
-            command="timeout 3m casr-java --stdout -- java -jar $jar_file"
+            command="timeout 3m casr-java --stdout -- java -jar $jar_file 2>/dev/null"
             $command
         done
