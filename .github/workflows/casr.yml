@@ -4,8 +4,12 @@ on:
   push:
 
 jobs:
-  run-casr:
-    runs-on: macos-latest
+  run-asan:
+    name: '${{ matrix.os }}'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, macos-latest]
 
     steps:
     - name: Checkout repository
