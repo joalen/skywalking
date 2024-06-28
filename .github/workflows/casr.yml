@@ -27,7 +27,8 @@ jobs:
     - name: Build project with JDK 17
       run: ./mvnw clean package -Dmaven.test.skip
 
-    - name: Install timeout command (to make hanging threads stop)
+    - name: Install timeout command (macOS)
+      if: runner.os == 'macOS'
       run: brew install coreutils
       
     - name: Install Rust
@@ -38,7 +39,8 @@ jobs:
     - name: Install CASR using Cargo
       run: cargo install casr
 
-    - name: Run CASR on the .java file(s)
+    - name: Run CASR on the .java file(s) (macOS)
+      if: runner.os == 'macOS'
       continue-on-error: true
       run: |      
         set +e
@@ -51,5 +53,22 @@ jobs:
         for jar_file in $jar_files; 
         do
             command="gtimeout 3m casr-java --stdout -- java -jar $jar_file"
+            $command
+        done
+
+    - name: Run CASR on the .java file(s) (Linux)
+      if: runner.os == 'Linux'
+      continue-on-error: true
+      run: |      
+        set +e
+        #!/bin/bash
+
+        directory=$(pwd)
+        
+        jar_files=$(find "$directory" -type f -name "*.jar")
+
+        for jar_file in $jar_files; 
+        do
+            command="timeout 3m casr-java --stdout -- java -jar $jar_file"
             $command
         done
