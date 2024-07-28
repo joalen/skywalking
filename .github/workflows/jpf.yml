@@ -59,7 +59,8 @@ jobs:
       run: |
         #!/bin/bash
         set +e 
-        
+
+        mkdir jpf_reports
         directory=$(pwd)
         runjpf_jar="/tmp/jpf-core/build/RunJPF.jar"
         jar_files=$(find "$directory" -type f -name "*.jar")
@@ -75,6 +76,12 @@ jobs:
                 continue
             fi
             
-            command="java -jar $runjpf_jar +classpath=$jar_file $main_class" > "${main_class}_jpf_report.txt"
-            $command
+            command="java -jar $runjpf_jar +classpath=$jar_file $main_class" 
+            $command > "./jpf_reports/${main_class}_jpf_report.txt"
         done
+
+    - name: Upload JPF reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: jpf-report-${{ github.event.repository.name}}-on-${{ matrix.os }}-from_branch_${{ github.ref_name }}
+        path: './jpf_reports/*'
