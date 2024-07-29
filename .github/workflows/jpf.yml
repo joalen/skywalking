@@ -77,7 +77,8 @@ jobs:
             fi
             
             command="java -jar $runjpf_jar +classpath=$jar_file $main_class" 
-            $command > "./jpf_reports/${main_class}_jpf_report.txt"
+            sanitized_main_class=$(echo "$main_class" | tr ':*?\"<>|/\\n' '_')
+            $command > "./jpf_reports/${sanitized_main_class}_jpf_report.txt"
         done
 
     - name: Upload JPF reports
