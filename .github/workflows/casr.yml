@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-latest]
+        os: [ubuntu-22.04, macos-13]
 
     steps:
     - name: Checkout repository
@@ -35,32 +35,32 @@ jobs:
       run: |
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
         source $HOME/.cargo/env
-
+    
     - name: Install CASR using Cargo
       run: cargo install casr
 
-    - name: Run CASR on the .java file(s) (macOS)
+    - name: Run CASR on the .JAR file(s) (macOS)
       if: runner.os == 'macOS'
       continue-on-error: true
-      run: |      
+      run: |  
+        mkdir -p casr_reports
         set +e
         #!/bin/bash
-
         directory=$(pwd)
         
         jar_files=$(find "$directory" -type f -name "*.jar")
-
         for jar_file in $jar_files; 
         do
-            command="gtimeout 3m casr-java --stdout -- java -jar $jar_file 2>&1 >/dev/null"
-            $command
+            sanitized_main_class=$(sanitize_filename "$main_class")
+            command="gtimeout 2m java -jar $runjpf_jar +classpath=$jar_file $main_class" 
+            $command > "./casr_reports/${sanitized_main_class}_casr_report.txt"
         done
-
+        
     - name: Run CASR on the .JAR file(s) (Linux)
       if: runner.os == 'Linux'
       continue-on-error: true
       run: |   
-        mkdir casr_reports
+        mkdir -p casr_reports
         set +e
         #!/bin/bash
         directory=$(pwd)
@@ -68,8 +68,9 @@ jobs:
         jar_files=$(find "$directory" -type f -name "*.jar")
         for jar_file in $jar_files; 
         do
-            command="casr-java --stdout -- java -jar $jar_file 2>/dev/null"
-            $command > "./casr_reports/${main_class}_casr_report.txt"
+            sanitized_main_class=$(sanitize_filename "$main_class")
+            command="timeout 2m java -jar $runjpf_jar +classpath=$jar_file $main_class" 
+            $command > "./casr_reports/${sanitized_main_class}_casr_report.txt"
         done
         
     - name: Upload CASR reports
