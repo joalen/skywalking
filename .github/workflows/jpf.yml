@@ -34,11 +34,9 @@ jobs:
         dist_directory=$(pwd)/dist
         if [ -d "$dist_directory" ]; then
           find "$dist_directory" -type f -name "*.tar.gz" -print0 | while IFS= read -r -d '' file; do
-            echo "Extracting $file"
             tar -xzf "$file" -C "$(dirname "$file")"
           done
         else
-          echo "$dist_directory does not exist."
           exit 1
         fi
 
@@ -46,27 +44,19 @@ jobs:
       if: runner.os == 'Windows'
       shell: powershell
       run: |
-        # Set the directory path
         $dist_directory = "$(pwd)\dist"
     
-        # Check if the directory exists
         if (Test-Path $dist_directory) {
-            # Find and extract .tar.gz files
             Get-ChildItem -Path $dist_directory -Recurse -Filter "*.tar.gz" | ForEach-Object {
                 $file = $_.FullName
-                Write-Output "Extracting $file"
-                
-                # Create the extraction directory if it doesn't exist
                 $extract_dir = Split-Path -Path $file
                 if (-not (Test-Path $extract_dir)) {
                     New-Item -Path $extract_dir -ItemType Directory -Force
                 }
     
-                # Extract the file
                 tar -xzf $file -C $extract_dir
             }
         } else {
-            Write-Output "$dist_directory does not exist."
             exit 1
         }
 
