@@ -25,7 +25,12 @@ jobs:
         java-version: '17'
 
     - name: Build project with JDK 17
+      if: ${{ runner.os == 'Linux' || runner.os == 'macOS' }}
       run: ./mvnw clean package -Dmaven.test.skip
+
+    - name: Build project with JDK 17
+      if: ${{ runner.os == 'Windows' }}
+      run: ./mvnw clean package -DskipTests
 
     - name: Unzip source directory 
       shell: bash
