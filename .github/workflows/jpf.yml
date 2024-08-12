@@ -106,9 +106,10 @@ jobs:
             if [ -z "$main_class" ]; then
                 continue
             fi
-            
+
+            sanitized_filename=$(echo "$main_class" | sed 's/[\/:*?"<>|]/_/g')
             command="java -jar $runjpf_jar +classpath=$jar_file $main_class" 
-            $command > "./jpf_reports/${main_class}_jpf_report.txt"
+            $command > "./jpf_reports/${sanitized_filename}_jpf_report.txt"
         done
 
     - name: Run JPF on JAR files
@@ -135,7 +136,14 @@ jobs:
                             set "main_class=%%j"
                             set "main_class=!main_class: =!"
                             set "main_class=!main_class:"=!%%"
-        
+                            set "main_class=!main_class:\=_!"
+                            set "main_class=!main_class:/=_!"
+                            set "main_class=!main_class:*=_!"
+                            set "main_class=!main_class:?=_!"
+                            set "main_class=!main_class:<=_!"
+                            set "main_class=!main_class:>=_!"
+                            set "main_class=!main_class:|=_!"
+                            
                             java -jar "%runjpf_jar%" +classpath="%%i" !main_class! > "jpf_reports\!main_class!_jpf_report.txt"
                         )
                     )
