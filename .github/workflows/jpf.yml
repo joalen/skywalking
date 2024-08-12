@@ -161,7 +161,7 @@ jobs:
         path: './jpf_reports/*'
 
     - name: Upload JPF reports (Windows only)
-      if: runner.os == "Windows"
+      if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4
       with:
         name: jpf-report-${{ github.event.repository.name }}-on-${{ matrix.os }}-from_branch_${{ github.ref_name }}
