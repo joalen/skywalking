@@ -107,9 +107,9 @@ jobs:
                 continue
             fi
 
-            sanitized_filename=$(echo "$main_class" | sed 's/[\/:*?"<>|]/_/g')
+            safe_main_class=$(echo "$main_class" | tr -d '\r' | tr -d '\n' | sed 's/[\/:*?"<>|]/_/g')
             command="java -jar $runjpf_jar +classpath=$jar_file $main_class" 
-            $command > "./jpf_reports/${sanitized_filename}_jpf_report.txt"
+            $command > "./jpf_reports/${safe_main_class}_jpf_report.txt"
         done
 
     - name: Run JPF on JAR files
