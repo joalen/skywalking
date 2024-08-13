@@ -116,7 +116,6 @@ jobs:
       if: runner.os == 'Windows'
       shell: cmd 
       run: | 
-        @echo off
         setlocal enabledelayedexpansion
         
         mkdir jpf_reports
