@@ -143,7 +143,7 @@ jobs:
                             set "main_class=!main_class:<=_!"
                             set "main_class=!main_class:>=_!"
                             set "main_class=!main_class:|=_!"
-                            
+                            java -jar "%runjpf_jar%" +classpath="%%i" !main_class!
                             java -jar "%runjpf_jar%" +classpath="%%i" !main_class! > "jpf_reports\!main_class!_jpf_report.txt"
                         )
                     )
